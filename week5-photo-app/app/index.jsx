@@ -1,128 +1,130 @@
-import {View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
 
+export default function HomeScreen() {
+  const router = useRouter();
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-export default function App() {
-  const [template, setTemplate] = useState(null);
-  const [photo, setPhoto] = useState(null);
+  const templates = [
+    {
+      id: 'nhec',
+      source: require('../template/template_nhec.png'),
+    },
+    {
+      id: 'white',
+      source: require('../template/template_white.png'),
+    },
+  ];
 
-    const templates = [
-        require('../template/template_nhec.png'),
-        require('../template/template_white.png'),
-    ];
+  const handleConfirm = () => {
+    if (!selectedTemplate) return;
+    router.push({
+      pathname: '/photo',
+      params: { templateId: selectedTemplate.id },
+    });
+  };
 
-    const pickPhoto = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-        return;
-        }
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            allowsEditing: true,
-            aspect: [4, 6],
-            quality: 1,
-            base64: true,
-        });
-    
-        if (!result.cancelled) {
-            setPhoto(result.assets[0].uri);
-        }
-    };
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Make Your Own Postcard</Text>
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Make Your Own Postcard </Text>
-            <View style={styles.templateContainer}>
-                <Text style={styles.subtitle}>Choose a template:</Text>
-                <View style={styles.templateList}>
-                    {templates.map((template, index) => (
-                        <Pressable key={index} onPress={() => setTemplate(template)}>
-                            <Image source={template} style={styles.templateImage} />
-                        </Pressable>
-                    ))}
-                </View>
-            </View>
-            {template && (
-                <View style={styles.previewContainer}>
-                    <Text style={styles.subtitle}>Preview:</Text>
-                    <Image source={template} style={styles.previewImage} />
-                    <Pressable style={styles.button} onPress={pickPhoto}>
-                        <Text style={styles.buttonText}>Pick Your Photo</Text>
-                    </Pressable>
-                </View>
-            )}
+      <View style={styles.templateContainer}>
+        <Text style={styles.subtitle}>Choose a template</Text>
 
-            {photo &&(
-                <View style={styles.previewContainer}>
-                    <Text style={styles.subtitle}>Your Photo:</Text>
-                    <Image source={{ uri: photo }} style={styles.previewImage} />
-                    <Image source={template} style={styles.overlay}/>
-                </View>
-
-            )}
-
+        <View style={styles.templateList}>
+          {templates.map((item) => (
+            <Pressable
+              key={item.id}
+              onPress={() => setSelectedTemplate(item)}
+              style={[
+                styles.templateCard,
+                selectedTemplate?.id === item.id && styles.selectedCard,
+              ]}
+            >
+              <Image source={item.source} style={styles.templateImage} />
+            </Pressable>
+          ))}
         </View>
-    );
+      </View>
+
+      {selectedTemplate && (
+        <View style={styles.previewContainer}>
+          <Text style={styles.subtitle}>Preview</Text>
+          <Image source={selectedTemplate.source} style={styles.previewImage} />
+
+          <Pressable style={styles.button} onPress={handleConfirm}>
+            <Text style={styles.buttonText}>Confirm Template</Text>
+          </Pressable>
+        </View>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    paddingTop: 30,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 24,
   },
   templateContainer: {
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
   },
   subtitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontWeight: '600',
+    marginBottom: 12,
   },
   templateList: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'center',
+    gap: 14,
+    marginBottom: 24,
+  },
+  templateCard: {
+    borderWidth: 2,
+    borderColor: '#d9d9d9',
+    borderRadius: 12,
+    padding: 6,
+    backgroundColor: '#fff',
+  },
+  selectedCard: {
+    borderColor: '#222',
   },
   templateImage: {
     width: 120,
     height: 180,
-    marginHorizontal: 10,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    borderRadius: 10,
+    borderRadius: 8,
   },
   previewContainer: {
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
+    marginTop: 8,
   },
   previewImage: {
     width: 240,
     height: 360,
-    borderWidth: 2,
-    borderColor: '#ccc',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: '#222',
+    paddingVertical: 12,
+    paddingHorizontal: 22,
     borderRadius: 10,
   },
-  bubutton: {
-  backgroundColor: 'black',
-  padding: 10,
-  borderRadius: 8,
-  marginTop: 20,
-    },
-
-  overlay: {
-    position: 'absolute',
-    width: 240,
-    height: 360,
-    },
-}); 
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
