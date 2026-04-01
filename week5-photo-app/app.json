@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Photo App",
-    "slug": "week5-photo-app",
+    "name": "wk5-hw",
+    "slug": "wk5-hw",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "week5photoapp",
+    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -47,14 +47,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7474a52c-76d6-4c29-a2d1-6d9d9edf39b2"
+        "projectId": "d6169801-e529-49a3-9744-59186f1cd96d"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/7474a52c-76d6-4c29-a2d1-6d9d9edf39b2"
-    }
+      "url": "https://u.expo.dev/d6169801-e529-49a3-9744-59186f1cd96d"
+    },
+    "owner": "raychen09060"
   }
 }
